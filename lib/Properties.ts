@@ -21,6 +21,10 @@ export class Properties<GP, CP, TP, SP, OP> {
 		return this._id;
 	}
 
+	getPath():string {
+		return this.path;
+	}
+
 	/**
 	 * @private
 	 * Under construction
