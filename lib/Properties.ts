@@ -76,9 +76,9 @@ export class Properties<GP, CP, TP, SP, OP> {
 		}
 	}
 
-	async child<T extends OnlyKeysWithArrayValues<CP>>(child: T, index:number, childProps?: string[]): Promise<T extends keyof TP ? UnpackIfArray<TP[T]> : UnpackIfArray<CP[T]>> {
+	async child<T extends OnlyKeysWithArrayValues<CP>>(child: T, index:number, childProps?: string[]): Promise<(T extends keyof TP ? UnpackIfArray<TP[T]> : UnpackIfArray<CP[T]>)|undefined> {
 		const result = await this.children(child, childProps, index);
-		return result[0];
+		return (result??[])[0];
 	}
 
 	async set<T extends keyof SP>(prop: T, value: SP[T]): Promise<null> {
