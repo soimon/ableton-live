@@ -76,7 +76,7 @@ export class Properties<GP, CP, TP, SP, OP> {
 		}
 	}
 
-	async child<T extends keyof CP>(child: T, index:number, childProps?: string[]): Promise<(T extends keyof TP ? TP[T] : CP[T])[number]|undefined> {
+	async child<T extends keyof CP>(child: T, index:number, childProps?: string[]): Promise<UnpackIfArray<T extends keyof TP ? TP[T] : CP[T]>> {
 		const [result] = await this.children(child, index, childProps);
 		return result;
 	}
@@ -127,3 +127,5 @@ export class Properties<GP, CP, TP, SP, OP> {
 		return this.ableton.callMultiple(this.path, calls, this._id, timeout);
 	}
 }
+
+type UnpackIfArray<T> = T extends Array<infer U> ? U : T;
