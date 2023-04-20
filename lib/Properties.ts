@@ -76,9 +76,9 @@ export class Properties<GP, CP, TP, SP, OP> {
 		}
 	}
 
-	async child<T extends keyof CP>(child: T, index:number, childProps?: string[]): Promise<UnpackIfArray<T extends keyof TP ? TP[T] : CP[T]>> {
-		const [result] = await this.children(child, index, childProps);
-		return result;
+	async child<T extends OnlyKeysWithArrayValues<CP>>(child: T, index:number, childProps?: string[]): Promise<T extends keyof TP ? UnpackIfArray<TP[T]> : UnpackIfArray<CP[T]>> {
+		const result = await this.children(child, childProps, index);
+		return result[0];
 	}
 
 	async set<T extends keyof SP>(prop: T, value: SP[T]): Promise<null> {
@@ -129,3 +129,4 @@ export class Properties<GP, CP, TP, SP, OP> {
 }
 
 type UnpackIfArray<T> = T extends Array<infer U> ? U : T;
+type OnlyKeysWithArrayValues<T> = { [K in keyof T]: T[K] extends Array<any> ? K : never }[keyof T];
