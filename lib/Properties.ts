@@ -12,7 +12,7 @@ export class Properties<GP, CP, TP, SP, OP> {
 	constructor(
 		protected ableton: AbletonLive,
 		protected ns: string,
-		protected path: string,
+		protected _path: string,
 		protected childrenInitialProps?: Partial<{ [T in keyof CP]: (string | ChildrenInitialProps)[] }>,
 		protected _id?: number
 	) {}
@@ -21,8 +21,8 @@ export class Properties<GP, CP, TP, SP, OP> {
 		return this._id;
 	}
 
-	getPath():string {
-		return this.path;
+	get path():string {
+		return this._path;
 	}
 
 	/**
@@ -39,7 +39,7 @@ export class Properties<GP, CP, TP, SP, OP> {
 	protected childrenTransformers: Partial<{ [T in keyof CP]: (val: CP[T]) => any }> = {};
 
 	async get<T extends keyof GP>(prop: T): Promise<T extends keyof TP ? TP[T] : GP[T]> {
-		const result = await this.ableton.get(this.path, prop as string, this._id);
+		const result = await this.ableton.get(this._path, prop as string, this._id);
 
 		const transformer = this.getterTransformers[prop];
 
@@ -65,7 +65,7 @@ export class Properties<GP, CP, TP, SP, OP> {
 			initialProps = initialProps.concat(childProps);
 		}
 
-		const result = await this.ableton.getChildren(this.path, { child: child as string, initialProps, index }, this._id);
+		const result = await this.ableton.getChildren(this._path, { child: child as string, initialProps, index }, this._id);
 
 		const transformer = this.childrenTransformers[child];
 
@@ -82,7 +82,7 @@ export class Properties<GP, CP, TP, SP, OP> {
 	}
 
 	async set<T extends keyof SP>(prop: T, value: SP[T]): Promise<null> {
-		return this.ableton.set(this.path, prop as string, value, this._id);
+		return this.ableton.set(this._path, prop as string, value, this._id);
 	}
 
 	async observe<T extends keyof OP | keyof CP>(
@@ -108,23 +108,23 @@ export class Properties<GP, CP, TP, SP, OP> {
 		if (this.childrenInitialProps) {
 			initialProps = this.childrenInitialProps[child];
 
-			return this.ableton.observe(this.path, prop as string, callback, {
+			return this.ableton.observe(this._path, prop as string, callback, {
 				initialProps,
 				liveObjectId: this._id,
 			});
 		} else {
-			return this.ableton.observe(this.path, prop as string, callback, {
+			return this.ableton.observe(this._path, prop as string, callback, {
 				liveObjectId: this._id,
 			});
 		}
 	}
 
 	protected async call(method: string, parameters?: any[], timeout?: number): Promise<any> {
-		return this.ableton.call(this.path, { parameters, method }, this._id, timeout);
+		return this.ableton.call(this._path, { parameters, method }, this._id, timeout);
 	}
 
 	protected async callMultiple(calls: any[][], timeout?: number): Promise<any> {
-		return this.ableton.callMultiple(this.path, calls, this._id, timeout);
+		return this.ableton.callMultiple(this._path, calls, this._id, timeout);
 	}
 }
 
