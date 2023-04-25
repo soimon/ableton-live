@@ -231,7 +231,7 @@ export class AbletonLive extends (EventEmitter as new () => TypedEventEmitter<Co
 		path: string,
 		objectId?: number,
 		args: { [k: string]: any } = {},
-		timeout = 2000
+		timeout = 15000
 	): Promise<any> {
 		if (!this._isConnected) {
 			throw new Error('[Ableton Live]: Client not connected to the server');
